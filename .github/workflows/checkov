@@ -1,0 +1,34 @@
+name: Scan Infrastructure as Code with Checkov
+
+on:
+  push:
+
+jobs:
+  checkov_scan:
+    runs-on: ${{ inputs.runner-label }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install Checkov
+        run: pip install checkov
+
+      - name: Run Infrastrucutre Scan Using Checkov
+        run: |
+          BASELINE_OPTION=""
+          if [ -f  ${{ inputs.baseline-file }} ]; then
+            echo "Found .checkov.baseline file. Using it for the scan."
+            BASELINE_OPTION="--baseline ${{ inputs.baseline-file }}"
+          fi
+          checkov -d . $BASELINE_OPTION --output-file-path checkov_results.sarif -o sarif -o cli  || true
+
+      - name: Upload SARIF results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: checkov_results.sarif
