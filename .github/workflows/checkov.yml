@@ -21,12 +21,7 @@ jobs:
 
       - name: Run Infrastrucutre Scan Using Checkov
         run: |
-          BASELINE_OPTION=""
-          if [ -f  ${{ inputs.baseline-file }} ]; then
-            echo "Found .checkov.baseline file. Using it for the scan."
-            BASELINE_OPTION="--baseline ${{ inputs.baseline-file }}"
-          fi
-          checkov -d . $BASELINE_OPTION --output-file-path checkov_results.sarif -o sarif -o cli  || true
+          checkov -d . --output-file-path checkov_results.sarif -o sarif -o cli  || true
 
       - name: Upload SARIF results
         uses: github/codeql-action/upload-sarif@v3
