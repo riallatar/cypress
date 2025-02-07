@@ -5,7 +5,7 @@ on:
 
 jobs:
   checkov_scan:
-    runs-on: ${{ inputs.runner-label }}
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
